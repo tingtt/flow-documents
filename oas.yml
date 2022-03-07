@@ -1,0 +1,173 @@
+openapi: 3.0.0
+
+info:
+  description: |
+    You can find out more about Swagger at
+    [http://swagger.io](http://swagger.io) or on
+    [irc.freenode.net, #swagger](http://swagger.io/irc/).
+  version: "2.0.0"
+  title: "flow API: documents"
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+
+security:
+  - cookieAuth: []
+
+tags: []
+
+paths:
+  /:
+    post:
+      requestBody:
+        $ref: "#/components/requestBodies/CreateDocument"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        400:
+          description: Invalid request
+        415:
+          description: Unsupported media type
+        422:
+          description: Unprocessable entity
+        500:
+          description: Internal server error
+
+    get:
+      parameters:
+        - $ref: "#/components/parameters/project_id"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Document"
+        204:
+          description: No content
+        500:
+          description: Internal server error
+
+  /{id}:
+    get:
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        404:
+          description: Not found
+        500:
+          description: Internal server error
+
+    patch:
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateDocument"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        400:
+          description: Invalid request
+        404:
+          description: Not found
+        415:
+          description: Unsupported media type
+        422:
+          description: Unprocessable entity
+        500:
+          description: Internal server error
+
+    delete:
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        204:
+          description: Deleted
+        404:
+          description: Not found
+        500:
+          description: Internal server error
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: TOKEN
+  schemas:
+    Document:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        url:
+          type: string
+        project_id:
+          type: integer
+
+    CreateDocumentBody:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        project_id:
+          type: integer
+      required:
+        - title
+        - url
+
+    UpdateDocumentBody:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        project_id:
+          type: integer
+
+  requestBodies:
+    CreateDocument:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateDocumentBody"
+
+    UpdateDocument:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateDocumentBody"
+
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    project_id:
+      name: project_id
+      in: query
+      schema:
+        type: integer
