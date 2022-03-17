@@ -20,26 +20,16 @@ func Get(userId uint64, id uint64) (d Document, notFound bool, err error) {
 		return
 	}
 
-	// TODO: uint64に対応
-	var (
-		name      string
-		url       string
-		projectId uint64
-	)
 	if !rows.Next() {
 		// Not found
 		notFound = true
 		return
 	}
-	err = rows.Scan(&name, &url, &projectId)
+	err = rows.Scan(&d.Name, &d.Url, &d.ProjectId)
 	if err != nil {
-		return Document{}, false, err
+		return
 	}
 
 	d.Id = id
-	d.Name = name
-	d.Url = url
-	d.ProjectId = projectId
-
 	return
 }

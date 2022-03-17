@@ -5,26 +5,23 @@ import "flow-documents/mysql"
 func Delete(userId uint64, id uint64) (notFound bool, err error) {
 	db, err := mysql.Open()
 	if err != nil {
-		return false, err
+		return
 	}
 	defer db.Close()
 	stmtIns, err := db.Prepare("DELETE FROM documents WHERE user_id = ? AND id = ?")
 	if err != nil {
-		return false, err
+		return
 	}
 	defer stmtIns.Close()
 	result, err := stmtIns.Exec(userId, id)
 	if err != nil {
-		return false, err
+		return
 	}
 	affectedRowCount, err := result.RowsAffected()
 	if err != nil {
-		return false, err
+		return
 	}
-	if affectedRowCount == 0 {
-		// Not found
-		return true, nil
-	}
+	notFound = affectedRowCount == 0
 
-	return false, nil
+	return
 }

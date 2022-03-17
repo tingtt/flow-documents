@@ -1,15 +1,16 @@
 package document
 
 import (
-	"database/sql"
 	"flow-documents/mysql"
 )
 
 func GetList(userId uint64, projectId *uint64) (documents []Document, err error) {
 	// Generate query
 	queryStr := "SELECT id, name, url, project_id FROM documents WHERE user_id = ?"
+	queryParams := []interface{}{userId}
 	if projectId != nil {
 		queryStr += " AND project_id = ?"
+		queryParams = append(queryParams, *projectId)
 	}
 
 	db, err := mysql.Open()
@@ -25,30 +26,18 @@ func GetList(userId uint64, projectId *uint64) (documents []Document, err error)
 	}
 	defer stmtOut.Close()
 
-	var rows *sql.Rows
-	if projectId == nil {
-		rows, err = stmtOut.Query(userId)
-	} else {
-		rows, err = stmtOut.Query(userId, *projectId)
-	}
+	rows, err := stmtOut.Query(queryParams...)
 	if err != nil {
 		return
 	}
 
 	for rows.Next() {
-		// TODO: uint64に対応
-		var (
-			id        uint64
-			name      string
-			url       string
-			projectId uint64
-		)
-		err = rows.Scan(&id, &name, &url, &projectId)
+		d := Document{}
+		err = rows.Scan(&d.Id, &d.Name, &d.Url, &d.ProjectId)
 		if err != nil {
 			return
 		}
-
-		documents = append(documents, Document{id, name, url, projectId})
+		documents = append(documents, d)
 	}
 
 	return

@@ -9,29 +9,27 @@ type PostBody struct {
 }
 
 func Post(userId uint64, post PostBody) (d Document, err error) {
-	// Insert DB
 	db, err := mysql.Open()
 	if err != nil {
-		return Document{}, err
+		return
 	}
 	defer db.Close()
 	stmtIns, err := db.Prepare("INSERT INTO documents (user_id, name, url, project_id) VALUES (?, ?, ?, ?)")
 	if err != nil {
-		return Document{}, err
+		return
 	}
 	defer stmtIns.Close()
 	result, err := stmtIns.Exec(userId, post.Name, post.Url, post.ProjectId)
 	if err != nil {
-		return Document{}, err
+		return
 	}
 	id, err := result.LastInsertId()
 	if err != nil {
-		return Document{}, err
+		return
 	}
 
 	d.Id = uint64(id)
 	d.Name = post.Name
 	d.Url = post.Url
-
 	return
 }
