@@ -37,7 +37,7 @@ func patch(c echo.Context) error {
 	}
 
 	// Bind request body
-	patch := new(document.Patch)
+	patch := new(document.PatchBody)
 	if err = c.Bind(patch); err != nil {
 		// 400: Bad request
 		c.Logger().Debug(err)
@@ -55,7 +55,7 @@ func patch(c echo.Context) error {
 
 	// TODO: Check project id
 
-	p, notFound, err := document.Update(userId, id, *patch)
+	p, notFound, err := document.Patch(userId, id, *patch)
 	if err != nil {
 		// 500: Internal server error
 		c.Logger().Debug(err)
