@@ -12,7 +12,7 @@ info:
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 
 security:
-  - cookieAuth: []
+  - Bearer: []
 
 tags: []
 
@@ -112,11 +112,6 @@ paths:
           description: Internal server error
 
 components:
-  securitySchemes:
-    cookieAuth:
-      type: apiKey
-      in: cookie
-      name: TOKEN
   schemas:
     Document:
       type: object
@@ -178,3 +173,9 @@ components:
       in: query
       schema:
         type: integer
+
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      description: Credentials or access token for API
