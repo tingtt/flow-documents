@@ -41,7 +41,7 @@ func getList(c echo.Context) error {
 	documents, err := document.GetList(userId, q.ProjectId)
 	if err != nil {
 		// 500: Internal server error
-		c.Logger().Debug(err)
+		c.Logger().Error(err)
 		return c.JSONPretty(http.StatusInternalServerError, map[string]string{"message": err.Error()}, "	")
 	}
 
